@@ -75,6 +75,9 @@
 										<delete-outlined class="editable-add-btn-icon"/>
 									</a-button>
 								</a-popconfirm>
+									<a-button @click="renderDoc()" class="editable-add-btn" style="margin-bottom: 8px">
+										<download-outlined class="editable-add-btn-icon"/>
+									</a-button>
 							</span>
 	</div>
 </template>
@@ -84,6 +87,7 @@
 </template>
 
 <script>
+	
 	import {
 		computed,
 		defineComponent,
@@ -95,18 +99,23 @@
 		CloseOutlined,
 		EditOutlined,
 		PlusOutlined,
-		DeleteOutlined
+		DeleteOutlined,
+		DownloadOutlined
 	} from '@ant-design/icons-vue';
 	import {
 		cloneDeep
 	} from 'lodash-es';
+
+	import { renderDoc } from './GenerateDoc.vue'
+
 	export default defineComponent({
 		components: {
 			SaveOutlined,
 			CloseOutlined,
 			EditOutlined,
 			PlusOutlined,
-			DeleteOutlined
+			DeleteOutlined,
+			DownloadOutlined
 		},
 		setup() {
 			const editableColumns = [
