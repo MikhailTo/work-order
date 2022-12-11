@@ -1,51 +1,56 @@
 <template>
-	<a-button class="editable-add-btn" style="margin-bottom: 8px" @click="handleAdd">
+	<a-button class="editable-add-btn" @click="handleAdd">
 		<plus-outlined class="editable-add-btn-icon" />
 	</a-button>
-	<a-table bordered :data-source="dataSource" :columns="columns" :scroll="{ x: 1500, y: 300 }">
+	<a-upload v-model:file-list="fileList" name="file" :multiple="false" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers" @change="handleChange">
+		<a-button>
+			Шаблон
+		</a-button>
+	</a-upload>
+	<a-table bordered :data-source="dataSource" :columns="columns" :scroll="{ x: 1500, y: 500 }">
 		<template #bodyCell="{ column, text, record }">
-					<template v-if="editableColumns.includes(column.dataIndex)">
-						<div>
-							<span v-if="(editableData[record.key] && column.type === 'textarea')">
-								<a-textarea 
-									v-model:value="editableData[record.key][column.dataIndex]"
-									:auto-size="{ minRows: 1, maxRows: 3 }"
-								/>
-							</span>
-							<span v-else-if="(editableData[record.key] && column.type === 'select')">
-								<a-select
-									v-model:value="editableData[record.key][column.dataIndex]"
-									:options="employees"
-									style="width: 180px"
-									:size="Small"
-								/>
-							</span>
-							<span v-else-if="(editableData[record.key] && column.type === 'multi-select')">
-								<a-select
-									v-model:value="editableData[record.key][column.dataIndex]"
-									mode="multiple"
-									style="width: 180px"
-									:size="Small"
-									placeholder="Select Item..."
-									max-tag-count="responsive"
-									:options="employees"
-								/>
-							</span>
-							<span v-else-if="(editableData[record.key] && column.type === 'date-picker')">
-								<a-date-picker
-									:show-time="{ format: 'HH:mm' }" format="DD-MM-YYYY HH:mm" 
-									placeholder="Время выдачи" @change="onChange" @ok="onOk"
-								/>
-							</span>
-							<span v-else-if="(editableData[record.key] && column.type === 'range-picker')">
-								<a-range-picker
-									:show-time="{ format: 'HH:mm' }" format="DD-MM-YYYY HH:mm"
-									:placeholder="['Начало работы', 'Окончание работы']"
-									@change="onRangeChange" @ok="onRangeOk"
-								/>
-							</span>
-							<template v-else >
-								{{ text }}
+								<template v-if="editableColumns.includes(column.dataIndex)">
+									<div>
+										<span v-if="(editableData[record.key] && column.type === 'textarea')">
+											<a-textarea 
+												v-model:value="editableData[record.key][column.dataIndex]"
+												:auto-size="{ minRows: 1, maxRows: 3 }"
+											/>
+										</span>
+										<span v-else-if="(editableData[record.key] && column.type === 'select')">
+											<a-select
+												v-model:value="editableData[record.key][column.dataIndex]"
+												:options="employees"
+												style="width: 180px"
+												:size="Small"
+											/>
+										</span>
+										<span v-else-if="(editableData[record.key] && column.type === 'multi-select')">
+											<a-select
+												v-model:value="editableData[record.key][column.dataIndex]"
+												mode="multiple"
+												style="width: 180px"
+												:size="Small"
+												placeholder="Select Item..."
+												max-tag-count="responsive"
+												:options="employees"
+											/>
+										</span>
+										<span v-else-if="(editableData[record.key] && column.type === 'date-picker')">
+											<a-date-picker
+												:show-time="{ format: 'HH:mm' }" format="DD-MM-YYYY HH:mm" 
+												placeholder="Время выдачи" @change="onChange" @ok="onOk"
+											/>
+										</span>
+										<span v-else-if="(editableData[record.key] && column.type === 'range-picker')">
+											<a-range-picker
+												:show-time="{ format: 'HH:mm' }" format="DD-MM-YYYY HH:mm"
+												:placeholder="['Начало работы', 'Окончание работы']"
+												@change="onRangeChange" @ok="onRangeOk"
+											/>
+										</span>
+										<template v-else >
+											{{ text }}
 </template>
 
 				</div>
@@ -53,41 +58,50 @@
 <template v-else-if="column.dataIndex === 'actions'">
 	<div class="editable-row-operations">
 		<span v-if="editableData[record.key]">
-								<a-button @click="onSave(record.key)">
-									<save-outlined class="editable-add-btn-icon"/>
-								</a-button>
-								<a-popconfirm title="Отменить?" @confirm="onCancel(record.key)">
-									<a-button>
-										<close-outlined class="editable-add-btn-icon"/>
-									</a-button>
-								</a-popconfirm>
-							</span>
+											<a-button @click="onSave(record.key)">
+												<save-outlined class="editable-add-btn-icon"/>
+											</a-button>
+											<a-popconfirm title="Отменить?" @confirm="onCancel(record.key)">
+												<a-button>
+													<close-outlined class="editable-add-btn-icon"/>
+												</a-button>
+											</a-popconfirm>
+										</span>
 		<span v-else>
-								<a-button @click="onEdit(record.key)">
-									<edit-outlined class="editable-add-btn-icon" />
-								</a-button>
-								<a-popconfirm
-									v-if="dataSource.length"
-									title="Вы уверены, удалить?"
-									@confirm="onDelete(record.key)"
-								>
-									<a-button class="editable-add-btn" style="margin-bottom: 8px">
-										<delete-outlined class="editable-add-btn-icon"/>
-									</a-button>
-								</a-popconfirm>
-									<a-button @click="renderDoc()" class="editable-add-btn" style="margin-bottom: 8px">
-										<download-outlined class="editable-add-btn-icon"/>
-									</a-button>
-							</span>
+											<a-button @click="onEdit(record.key)">
+												<edit-outlined class="editable-add-btn-icon" />
+											</a-button>
+											<a-popconfirm
+												v-if="dataSource.length"
+												title="Вы уверены, удалить?"
+												@confirm="onDelete(record.key)"
+											>
+												<a-button class="editable-add-btn">
+													<delete-outlined class="editable-add-btn-icon"/>
+												</a-button>
+											</a-popconfirm>
+												<a-button @click="renderDoc('', dataSource[record.key], templateOutputFileName)" class="editable-add-btn">
+													<download-outlined class="editable-add-btn-icon"/>
+												</a-button>
+										</span>
 	</div>
 </template>
 		</template>
 	</a-table>
-	<!-- {{ JSON.stringify(dataSource, null, 2) }} -->
+	{{ JSON.stringify(dataSource, null, 2) }}
+	{{ JSON.stringify(fileList, null, 2) }}
 </template>
 
 <script>
-	
+	import Docxtemplater from "docxtemplater"
+	import PizZip from "pizzip"
+	import PizZipUtils from "pizzip/utils/index.js"
+	import {
+		message
+	} from 'ant-design-vue';
+	import {
+		saveAs
+	} from "file-saver"
 	import {
 		computed,
 		defineComponent,
@@ -105,9 +119,7 @@
 	import {
 		cloneDeep
 	} from 'lodash-es';
-
-	import { renderDoc } from './GenerateDoc.vue'
-
+	// import { renderDoc } from './GenerateDoc.vue'
 	export default defineComponent({
 		components: {
 			SaveOutlined,
@@ -226,14 +238,13 @@
 			const count = computed(() => dataSource.value.length + 1);
 			const editableData = reactive({});
 			const employees = ref([" ", "не назначается", "Оперативный персонал", "Шутов М.А. IV гр.", "Тошкин М.А. III гр.",
-					"Поляков А.Ю. IVгр.,", "Лестин С.. IVгр.,", "Крапивин В.. IVгр.,", "Мягков В.Н. Vгр."
+				"Поляков А.Ю. IVгр.,", "Лестин С.. IVгр.,", "Крапивин В.. IVгр.,", "Мягков В.Н. Vгр."
 			].map(
-					(v) => ({
-						label: v,
-						value: v
-					})
-				)
-			);
+				(v) => ({
+					label: v,
+					value: v
+				})
+			));
 			const onEdit = key => {
 				editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0]);
 			};
@@ -265,8 +276,15 @@
 				};
 				dataSource.value.push(newData);
 			};
-			const handleChange = value => {
-				console.log(`selected ${value}`);
+			const handleChange = info => {
+				if (info.file.status !== 'uploading') {
+					console.log(info.file, info.fileList);
+				}
+				if (info.file.status === 'done') {
+					message.success(`${info.file.name} file uploaded successfully`);
+				} else if (info.file.status === 'error') {
+					message.error(`${info.file.name} file upload failed.`);
+				}
 			};
 			const onChange = (dateString) => {
 				console.log('Formatted Selected Time: ', dateString);
@@ -274,8 +292,62 @@
 			const onRangeChange = (dateString) => {
 				console.log('Formatted Selected Time: ', dateString);
 			};
-
+			const loadFile = (url, callback) => {
+				PizZipUtils.getBinaryContent(url, callback)
+			};
+			const templateOutputFileName = "output.docx";
+			const renderDoc = (pathFileTemplate, dataFileTemplate, nameFileOutput = "output.docx") => {
+				loadFile(pathFileTemplate, (error, content) => {
+					if (error) {
+						throw error;
+					}
+					const zip = new PizZip(content)
+					const doc = new Docxtemplater(zip, {
+						paragraphLoop: true,
+						linebreaks: true
+					})
+					doc.setData(dataFileTemplate)
+					try {
+						doc.render()
+					} catch (error) {
+						const replaceErrors = (key, value) => {
+							if (value instanceof Error) {
+								return Object.getOwnPropertyNames(value).reduce(
+									(error, key) => {
+										error[key] = value[key]
+										return error
+									}, {})
+							}
+							return value
+						}
+						console.log(JSON.stringify({
+							error: error
+						}, replaceErrors))
+						if (error.properties && error.properties.errors instanceof Array) {
+							const errorMessages = error.properties.errors
+								.map((error) => {
+									return error.properties.explanation
+								})
+								.join("\n")
+							console.log("errorMessages", errorMessages)
+						}
+						throw error
+					}
+					const out = doc.getZip().generate({
+						type: "blob",
+						mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+					})
+					saveAs(out, nameFileOutput)
+				})
+			};
+			const fileList = ref([]);
 			return {
+				fileList,
+				headers: {
+					authorization: 'authorization-text',
+				},
+				templateOutputFileName,
+				renderDoc,
 				editableColumns,
 				columns,
 				handleChange,
@@ -295,6 +367,9 @@
 	});
 </script>
 <style>
+	.ant-btn {
+		margin-bottom: 8px
+	}
 	.editable-cell {
 		position: relative;
 	}

@@ -20,7 +20,7 @@
 				<a-breadcrumb-item>App</a-breadcrumb-item>
 			</a-breadcrumb>
 			<div :style="{ background: '#fff', padding: '24px', minHeight: '380px' }">
-				<OrdersTable msg="Table"/>
+				<OrdersTable />
 			</div>
 		</a-layout-content>
 		<a-layout-footer :style="{ textAlign: 'center' }">
@@ -30,7 +30,6 @@
 </template>
 <script>
 	import "ant-design-vue/dist/antd.css";
-	
 	import { defineComponent, ref } from 'vue';
 	import OrdersTable from './OrdersTable.vue';
 	export default defineComponent({
